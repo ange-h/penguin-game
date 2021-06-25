@@ -6,12 +6,13 @@
 from graphics import *
 import time
 from random import randint
+import math
 
 class FallFish:
     def __init__(self, location, dY, win):
         self.win = win
         self.location = location
-        self.dY = 2
+        self.dY = 2.1
 
         self.parts = []
         self.body = Circle(location, 10)
@@ -28,23 +29,24 @@ class FallFish:
         if intersectsWith(self.body, basketHandle):
             self.body.undraw()
             score = score+0.1
-            iScore = int(round(float(score)))
-            self.body.move(0, 0)
+            iScore = math.ceil(score)
      
         else:
             self.body.move(0, self.dY)
-            iScore = int(round(float(score)))
+            iScore = math.ceil(score)
         
-            if intersectsWith(self.body, groundLine):
-                self.body.undraw()
-                miss = (miss+1/11)
-                iMiss = int(round(float(miss)))
+        if intersectsWith(self.body, groundLine):
+            self.body.undraw()
+            miss = (miss+1/11)
+            iMiss = int(round(float(miss)))
+            iMiss = iMiss - iScore
                
-            else:    
-                self.body.move(0, self.dY)
-                iMiss = int(round(float(miss)))
+        else:    
+            self.body.move(0, self.dY)
+            iMiss = int(round(float(miss)))
+            iMiss = iMiss - iScore
        
-        missText.setText("Misses: "+str(iMiss-iScore))
+        missText.setText("Misses: "+str(iMiss))
         scoreText.setText("Score: "+str(iScore))
 #colours and draws objects
 def colouring(thing, colour):
@@ -120,6 +122,22 @@ basketHandle = Line(Point(232, 218), Point(268, 218))
 basketHandle.setWidth(3) #make basket handle thicker
 basket = Rectangle(Point(238, 218), Point(262, 233))
 
+#new penguin
+head2 = Circle(Point(250, 200), 20)
+body2 = Oval(Point(232, 210), Point(268, 258))
+leftArm2 = Oval(Point(220, 215), Point(240, 227))
+rightArm2 = Oval(Point(280, 215), Point(260, 227))
+leftFoot2 = Polygon(Point(244, 252), Point(235, 263), Point(245, 263))
+rightFoot2 = Polygon(Point(256, 252), Point(265, 263), Point(255, 263))
+whiteHead2 = Circle(Point(250, 203), 13)
+belly2 = Oval(Point(237, 215), Point(263, 253))
+leftEye2 = Circle(Point(244, 199), 2)
+rightEye2 = Circle(Point(256, 199), 2)
+beak2 = Polygon(Point(246, 205), Point(254, 205), Point(250, 212))
+basketHandle2 = Line(Point(232, 218), Point(268, 218))
+basketHandle2.setWidth(3) #make basket handle thicker
+basket2 = Rectangle(Point(238, 218), Point(262, 233))
+
 #calling function to colour penguin parts
 colourNoDraw(rightFoot, "gold")
 colourNoDraw(leftFoot, "gold")    
@@ -173,10 +191,13 @@ instructions.draw(win)
 
 gameStarted = False
 
+scoreTextX = 400
+scoreTextY = 15
+
 fallingFish = []
 spawnCounter = 100
 spawnStep = 0
-scoreText = Text(Point(400, 15), "Score: 0")
+scoreText = Text(Point(scoreTextX, scoreTextY), "Score: 0")
 score = 0
 missText = Text(Point(300, 15), "Misses: 0")
 miss = 0
@@ -199,8 +220,6 @@ while True:
             groundLine = Line(Point(0, 250), Point(500, 250))
             colouring(groundLine, "white")
             
-
-           
 
             #draw parts of characters
             for part in penguinList:
@@ -252,12 +271,56 @@ while True:
         spawnCounter = randint(50, 100)
         fallingFish.append(FallFish(Point(randint(25, 475), 0), 5, win))
 
-##    if iMiss == 3:
-##        break
+    if iMiss == 3:
+        break
 
     update(36)
+    
+#undraw everything
+inGame.undraw()
+ground.undraw()
 
-            
+scoreText.undraw()
+missText.undraw()
+for part in penguinList:
+    part.undraw()
+
+
+#redraw things     
+inGame.draw(win)
+ground.draw(win)
+
+colouring(rightFoot2, "gold")
+colouring(leftFoot2, "gold")    
+colouring(head2, "gray")
+colouring(body2, "gray")
+colouring(leftArm2, "gray")
+colouring(rightArm2, "gray")
+colouring(whiteHead2, "white")
+colouring(belly2, "white")
+colouring(leftEye2, "black")
+colouring(rightEye2, "black")
+colouring(beak2, "gold")
+colouring(basketHandle2, "sienna")
+colouring(basket2, "sienna")
+
+leftEyebrow = Line(Point(240, 193), Point(248, 197))
+leftEyebrow.setWidth(2)
+leftEyebrow.draw(win)
+
+rightEyebrow = Line(Point(260, 193), Point(252, 197))
+rightEyebrow.setWidth(2)
+rightEyebrow.draw(win)
+
+scoreText.move(-150, 0)
+scoreText.setSize(18)
+scoreText.draw(win)
+
+over = Text(Point(250, 100), "Game Over")
+over.setSize(24)
+over.draw(win)
+
+
                         
                     
             
